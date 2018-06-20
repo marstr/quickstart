@@ -168,6 +168,16 @@
       </thead>
       <tbody>
         <tr>
+          <td>Host</td>
+          <td>
+            <%= db_meta.Host %>
+          </td>
+        </tr>
+        <tr>
+          <td>Database</td>
+          <td><%= db_meta.Name %></td>
+        </tr>
+        <tr>
           <td>Status</td>
           <td><%= db_meta.Status %></td>
         </tr>
@@ -181,15 +191,49 @@
         </tr>
       </tbody>
     </table>
+
+    Make sure your `database.yml` file is configured with the details provided
+    above then run `buffalo setup`. When you return to this page, this page
+    should be able to connect.
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
-        <h3>Container</h3>
+        <h3>Web App for Containers</h3>
       </div>
     </div>
+    
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th colspan="2">Quick Stats:</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Buffalo Environment</td>
+            <td><%= container_meta.Environment %></td>
+          </tr>
+          <tr>
+            <td>Site Name</td>
+            <td><%= container_meta.SiteName %></td>
+          </tr>
+          <tr>
+            <td>Site Link</td>
+            <td><%= container_meta.SiteLink %></td>
+          </tr>
+          <tr>
+            <td>Kudu Link</td>
+            <td><%= container_meta.KuduLink %></td>
+          </tr>
+          <tr>
+            <td>Go Version</td>
+            <td><%= container_meta.GoVersion %></td>
+          </tr>
+        </tbody>
+      </table>
     You're not looking at your Buffalo Application!<br>
     <br>
     This is a diagnostic container to help you ensure that you're on your way to success with running this in Azure.

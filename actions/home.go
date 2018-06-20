@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gobuffalo/buffalo"
@@ -11,10 +12,22 @@ import (
 // of a your database.
 type DatabaseMetadata struct {
 	Status         string
+	Name           string
+	Host           string
 	Dialect        string
 	Connected      bool
 	DatabaseExists bool
 	EnvironmentVar string
+}
+
+// ContainerMetadata stashes a bunch of useful information about the configuration
+// of your Web App for Containers.
+type ContainerMetadata struct {
+	SiteName    string
+	KuduLink    string
+	SiteLink    string
+	GoVersion   string
+	Environment string
 }
 
 // HomeHandler is a default handler to serve up
@@ -27,7 +40,26 @@ func HomeHandler(c buffalo.Context) error {
 		"CUSTOMCONNSTR_DATABASE_URL",
 		"DATABASE_URL")
 
+	c.Data()["container_meta"] = newContainerMetadataFromEnvironment()
+
 	return c.Render(200, r.HTML("index.html"))
+}
+
+func newContainerMetadataFromEnvironment() (cMeta ContainerMetadata) {
+	cMeta.Environment = os.Getenv("GO_ENV")
+	cMeta.SiteName = os.Getenv("APPSETTING_WEBSITE_NAME")
+
+	if cMeta.SiteName == "" {
+		cMeta.SiteName = "Unknown, are you sure you're running in an Azure Web App for Containers?"
+		cMeta.SiteLink = "N/A"
+		cMeta.KuduLink = "N/A"
+		cMeta.GoVersion = "N/A"
+	} else {
+		cMeta.KuduLink = fmt.Sprintf("https://%s.scm.azurewebsites.net", cMeta.SiteName)
+		cMeta.SiteLink = fmt.Sprintf("https://%s.azurewebsites.net", cMeta.SiteName)
+	}
+	cMeta.GoVersion = os.Getenv("GOLANG_VERSION")
+	return
 }
 
 func newDatabaseMetadataFromEnvironment(connectionStringVariables ...string) (dbMeta DatabaseMetadata) {
@@ -59,8 +91,9 @@ func newDatabaseMetadataFromEnvironment(connectionStringVariables ...string) (db
 		return
 	}
 	deets.Finalize()
-
+	dbMeta.Name = deets.Database
 	dbMeta.Dialect = deets.Dialect
+	dbMeta.Host = deets.Host
 	connection, err := pop.NewConnection(deets)
 	if err != nil {
 		dbMeta.Status = "Connection details aren't valid."
@@ -69,7 +102,14 @@ func newDatabaseMetadataFromEnvironment(connectionStringVariables ...string) (db
 
 	err = connection.Open()
 	if err != nil {
-		dbMeta.Status = "Unable to connect to database."
+		dbMeta.Status = "Unable to connect to database host."
+		return
+	}
+	defer connection.Close()
+
+	_, err = connection.NewTransaction()
+	if err != nil {
+		dbMeta.Status = "The database host was found, but the actual database hasn't been initialized."
 		return
 	}
 

@@ -15,6 +15,7 @@ import (
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
+
 var app *buffalo.App
 var T *i18n.Translator
 

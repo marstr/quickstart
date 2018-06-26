@@ -47,7 +47,7 @@ func HomeHandler(c buffalo.Context) error {
 
 func newContainerMetadataFromEnvironment() (cMeta ContainerMetadata) {
 	cMeta.Environment = os.Getenv("GO_ENV")
-	cMeta.SiteName = os.Getenv("APPSETTING_WEBSITE_NAME")
+	cMeta.SiteName = os.Getenv("APPSETTING_WEBSITE_SITE_NAME")
 
 	if cMeta.SiteName == "" {
 		cMeta.SiteName = "Unknown, are you sure you're running in an Azure Web App for Containers?"

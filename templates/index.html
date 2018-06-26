@@ -213,20 +213,16 @@
         </thead>
         <tbody>
           <tr>
-            <td>Buffalo Environment</td>
-            <td><%= container_meta.Environment %></td>
-          </tr>
-          <tr>
             <td>Site Name</td>
             <td><%= container_meta.SiteName %></td>
           </tr>
           <tr>
             <td>Site Link</td>
-            <td><%= container_meta.SiteLink %></td>
+            <td><a href="<%= container_meta.SiteLink %>"><%= container_meta.SiteLink %></a></td>
           </tr>
           <tr>
             <td>Kudu Link</td>
-            <td><%= container_meta.KuduLink %></td>
+            <td><a href="<%= container_meta.KuduLink %>"><%= container_meta.KuduLink %></a></td>
           </tr>
           <tr>
             <td>Go Version</td>

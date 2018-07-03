@@ -191,12 +191,26 @@
         </tr>
       </tbody>
     </table>
-
     Make sure your `database.yml` file is configured with the details provided
     above then run `buffalo setup`. When you return to this page, this page
-    should be able to connect.
+    should be able to connect.<br>
+    <br>
+    Specifically, your Web App for Containers is setup to use the environment variable `<%= db_meta.EnvironmentVar %>`.
+    Consider updating your `database.yml` file to look something like:<br><br>
+    <code>
+      development:<br>
+      &nbsp;&nbsp;url: {{env <%= db_meta.EnvironmentVar %>}}
+    </code><br>
+    <br>
+    You should also update your `.env` file to contain the connection string. Doing this will allow `buffalo setup` and
+    `buffalo db` to access the database you've created. That will look something like: 
+    <code><%= db_meta.EnvironmentVar %>="[your connection string]"</code>. You should be able to find your connection strings value <a href="<%= container_meta.KuduLink %>/Env.cshtml">here</a>.<br>
+    <br>
+    In order to allow your local machine to run `buffalo setup`, you'll need to add a firewall rule for your IP Address. This is easiest to do in the <a href="https://portal.azure.com">Azure Portal</a>.
   </div>
 </div>
+<br>
+<br>
 <div class="row">
   <div class="col-md-12">
     <div class="subtitle">
@@ -224,15 +238,16 @@
             <td>Kudu Link</td>
             <td><a href="<%= container_meta.KuduLink %>"><%= container_meta.KuduLink %></a></td>
           </tr>
-          <tr>
-            <td>Go Version</td>
-            <td><%= container_meta.GoVersion %></td>
-          </tr>
         </tbody>
       </table>
     You're not looking at your Buffalo Application!<br>
     <br>
-    This is a diagnostic container to help you ensure that you're on your way to success with running this in Azure.
+    This is a diagnostic container to help you ensure that you're on your way to success with running this in Azure.<br>
+    <br>
+    To host your application here, first get it hosted in a container registry like Azure Container Registry or Docker 
+    Hub. You can find some documentation on how to do that 
+    <a href="https://github.com/Azure/buffalo-azure/tree/578d16f4ecbf3a0cfecbe14e839e2362859c3545#provision">here</a>.
+    Once that is complete, run `buffalo azure provision` again using the `--image` flag to specify your image.
   </div>
 </div>
 <div class="foot">
